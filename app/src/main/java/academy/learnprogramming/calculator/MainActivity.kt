@@ -7,7 +7,12 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
+private const val TEXT_OPERATION = "TextOperation"
+private const val DOUBLE_OPERAND1 = "DoubleOperand1"
+private const val BOOLEAN_OPERAND1_INITIALIZED = "BooleanOperand1Initialized"
+
 class MainActivity : AppCompatActivity() {
+
     private lateinit var result: EditText
     private lateinit var newNumber: EditText
     private val displayOperation by lazy(LazyThreadSafetyMode.NONE) { findViewById<TextView>(R.id.operation) }
@@ -101,5 +106,27 @@ class MainActivity : AppCompatActivity() {
         }
         result.setText(operand1.toString())
         newNumber.setText("")
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(TEXT_OPERATION, pendingOperation)
+        if (operand1 != null) {
+            outState.putDouble(DOUBLE_OPERAND1, operand1!!)
+            outState.putBoolean(BOOLEAN_OPERAND1_INITIALIZED, true)
+        }
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        val savedPendingOperation = savedInstanceState.getString(TEXT_OPERATION, "=")
+        pendingOperation = savedPendingOperation
+        displayOperation.text = savedPendingOperation
+        val operand1Initialized = savedInstanceState.getBoolean(BOOLEAN_OPERAND1_INITIALIZED, false)
+        operand1 = if (operand1Initialized) {
+            savedInstanceState.getDouble(DOUBLE_OPERAND1)
+        } else {
+            null
+        }
     }
 }
