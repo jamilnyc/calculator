@@ -10,11 +10,10 @@ import androidx.appcompat.app.AppCompatActivity
 class MainActivity : AppCompatActivity() {
     private lateinit var result: EditText
     private lateinit var newNumber: EditText
-    private val displayOperation by lazy (LazyThreadSafetyMode.NONE){findViewById<TextView>(R.id.operation)}
+    private val displayOperation by lazy(LazyThreadSafetyMode.NONE) { findViewById<TextView>(R.id.operation) }
 
     // Variables to hold the operands and type of calculation
     private var operand1: Double? = null
-    private var operand2: Double = 0.0
     private var pendingOperation = "="
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,7 +60,7 @@ class MainActivity : AppCompatActivity() {
         button9.setOnClickListener(listener)
         buttonDot.setOnClickListener(listener)
 
-        val opListener = View.OnClickListener{v ->
+        val opListener = View.OnClickListener { v ->
             val op = (v as Button).text.toString()
             try {
                 val value = newNumber.text.toString().toDouble()
@@ -84,25 +83,22 @@ class MainActivity : AppCompatActivity() {
         if (operand1 == null) { // Initial state, first number entered
             operand1 = value
         } else {
-            operand2 = value
-        }
+            if (pendingOperation == "=") {
+                pendingOperation = operation
+            }
 
-        if (pendingOperation == "=") {
-            pendingOperation = operation
-        }
-
-        when (pendingOperation) {
-            "=" -> operand1 = operand2
-            "/" -> if (operand1 == 0.0) {
-                    operand1 = Double.NaN // handle attempt to divide by zero
+            when (pendingOperation) {
+                "=" -> operand1 = value
+                "/" -> operand1 = if (operand1 == 0.0) {
+                    Double.NaN // handle attempt to divide by zero
                 } else {
-                    operand1 = operand1!! / operand2 // !! is needed because operand1 is a nullable Double, operand2 is a Double
+                    operand1!! / value // !! is needed because operand1 is a nullable Double, operand2 is a Double
                 }
-            "*" -> operand1 = operand1!! * operand2
-            "-" -> operand1 = operand1!! - operand2
-            "+" -> operand1 = operand1!! + operand2
+                "*" -> operand1 = operand1!! * value
+                "-" -> operand1 = operand1!! - value
+                "+" -> operand1 = operand1!! + value
+            }
         }
-
         result.setText(operand1.toString())
         newNumber.setText("")
     }
