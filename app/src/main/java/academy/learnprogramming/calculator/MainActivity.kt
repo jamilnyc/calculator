@@ -63,9 +63,11 @@ class MainActivity : AppCompatActivity() {
 
         val opListener = View.OnClickListener{v ->
             val op = (v as Button).text.toString()
-            val value = newNumber.text.toString()
-            if (value.isNotEmpty()) {
+            try {
+                val value = newNumber.text.toString().toDouble()
                 performOperation(value, op)
+            } catch (e: NumberFormatException) {
+                newNumber.setText("")
             }
             pendingOperation = op
             displayOperation.text = pendingOperation
@@ -78,11 +80,11 @@ class MainActivity : AppCompatActivity() {
         buttonPlus.setOnClickListener(opListener)
     }
 
-    private fun performOperation(value: String, operation: String) {
+    private fun performOperation(value: Double, operation: String) {
         if (operand1 == null) { // Initial state, first number entered
-            operand1 = value.toDouble()
+            operand1 = value
         } else {
-            operand2 = value.toDouble()
+            operand2 = value
         }
 
         if (pendingOperation == "=") {
@@ -94,7 +96,7 @@ class MainActivity : AppCompatActivity() {
             "/" -> if (operand1 == 0.0) {
                     operand1 = Double.NaN // handle attempt to divide by zero
                 } else {
-                    operand1 = operand1!! / operand2
+                    operand1 = operand1!! / operand2 // !! is needed because operand1 is a nullable Double, operand2 is a Double
                 }
             "*" -> operand1 = operand1!! * operand2
             "-" -> operand1 = operand1!! - operand2
