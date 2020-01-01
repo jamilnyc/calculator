@@ -53,6 +53,15 @@ class MainActivity : AppCompatActivity() {
         buttonMultiply.setOnClickListener(opListener)
         buttonMinus.setOnClickListener(opListener)
         buttonPlus.setOnClickListener(opListener)
+
+        buttonNegate.setOnClickListener {
+            if(newNumber.text.startsWith("-")) {
+                newNumber.setText(newNumber.text.substring(1))
+            } else {
+                val updatedNumber:String = "-" + newNumber.text.toString()
+                newNumber.setText(updatedNumber)
+            }
+        }
     }
 
     private fun performOperation(value: Double, operation: String) {
