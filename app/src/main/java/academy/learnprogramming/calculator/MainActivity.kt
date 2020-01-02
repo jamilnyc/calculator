@@ -62,6 +62,14 @@ class MainActivity : AppCompatActivity() {
                 newNumber.setText(updatedNumber)
             }
         }
+
+        buttonClear.setOnClickListener {
+            operand1 = null
+            pendingOperation = "="
+            result.setText("")
+            newNumber.setText("")
+            operation.setText("")
+        }
     }
 
     private fun performOperation(value: Double, operation: String) {
